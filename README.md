@@ -1,6 +1,6 @@
 # photo_viewer
 
-<img src="./example.gif" width=300 loop autoplay>
+![](https://github.com/kumamotone/photo_viewer/raw/main/example.gif)
 
 A versatile Flutter library for displaying and interacting with images in your app.
 
@@ -19,7 +19,7 @@ To use this plugin, add install_plugin as a dependency in your pubspec.yaml file
 
 ```
 dependencies:
-  photo_viewer: '^0.0.1'
+  photo_viewer: '^0.0.2'
 ```
 
 ## Basic Usage
@@ -29,12 +29,10 @@ dependencies:
 The simplest way to use PhotoViewer is to display a single image:
 
 ```dart
-// ローカルアセット画像
 PhotoViewerImage(
   imageUrl: 'assets/your_image.jpg',
 )
 
-// ネットワーク画像
 PhotoViewerImage(
   imageUrl: 'https://example.com/your_image.jpg',
 )
@@ -47,7 +45,6 @@ This creates a tappable image that opens a full-screen viewer when tapped.
 To display multiple images with swipe navigation:
 
 ```dart
-// ローカルアセットとネットワーク画像を混在させることも可能
 PhotoViewerMultipleImage(
   imageUrls: [
     'assets/image1.jpg', 
@@ -171,9 +168,6 @@ PhotoViewer provides various customization options:
 - `minScale`/`maxScale`: Set the minimum and maximum zoom scale
 - `showDefaultCloseButton`: Toggle the default close button visibility
 - `enableVerticalDismiss`: Enable or disable vertical swipe to dismiss
-- `borderRadius`: Set corner radius for images
-
-This automatically arranges 1-4 images in an attractive grid layout that opens the PhotoViewer when tapped.
 
 ## Example
 
