@@ -1,6 +1,37 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
+bool _isNetworkUrl(String url) {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
+Widget _buildImageFromUrl(
+  String url, {
+  BoxFit fit = BoxFit.cover,
+  double? width,
+  double? height,
+}) {
+  if (_isNetworkUrl(url)) {
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: fit,
+      width: width,
+      height: height,
+      placeholder: (context, url) =>
+          const Center(child: CircularProgressIndicator()),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
+    );
+  } else {
+    return Image.asset(
+      url,
+      fit: fit,
+      width: width,
+      height: height,
+    );
+  }
+}
 
 /// A [TransparentPageRoute] is a route that becomes transparent when navigated.
 /// It allows you to see through to the previous route when this one is active.
@@ -295,7 +326,8 @@ class PhotoViewerMultipleImage extends StatelessWidget {
   final ValueChanged<int>? onPageChanged;
   final void Function(void Function(int page) jump)? onJumpToPage;
 
-  String _heroTag(int index) => 'photo_viewer_${id}_${imageUrls[index]}';
+  String _heroTag(int index) =>
+      'photo_viewer_${id}_${index}_${imageUrls[index]}';
 
   @override
   Widget build(BuildContext context) {
@@ -304,11 +336,7 @@ class PhotoViewerMultipleImage extends StatelessWidget {
         showPhotoViewer(
           context: context,
           builders: imageUrls.map<WidgetBuilder>((url) {
-            return (BuildContext context) => Image.asset(
-                  url,
-                  width: MediaQuery.of(context).size.width,
-                  fit: BoxFit.cover,
-                );
+            return (BuildContext context) => _buildImageFromUrl(url);
           }).toList(),
           heroTagBuilder: _heroTag,
           initialPage: index,
@@ -322,11 +350,7 @@ class PhotoViewerMultipleImage extends StatelessWidget {
       },
       child: Hero(
         tag: _heroTag(index),
-        child: Image.asset(
-          imageUrls[index],
-          width: double.infinity,
-          fit: BoxFit.cover,
-        ),
+        child: _buildImageFromUrl(imageUrls[index]),
       ),
     );
   }
@@ -462,15 +486,17 @@ class PhotoViewerScreenState extends State<PhotoViewerScreen>
                 widget.enableVerticalDismiss && !isZoomed.value && !isScrolling,
             child: NotificationListener<ScrollNotification>(
               onNotification: (notification) {
-                if (notification is ScrollStartNotification) {
-                  setState(() {
-                    isScrolling = true;
-                  });
-                } else if (notification is ScrollEndNotification) {
-                  setState(() {
-                    isScrolling = false;
-                  });
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (notification is ScrollStartNotification) {
+                    setState(() {
+                      isScrolling = true;
+                    });
+                  } else if (notification is ScrollEndNotification) {
+                    setState(() {
+                      isScrolling = false;
+                    });
+                  }
+                });
                 return true;
               },
               child: ValueListenableBuilder<bool>(

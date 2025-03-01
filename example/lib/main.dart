@@ -40,6 +40,18 @@ class HomePage extends StatelessWidget {
             },
           ),
           ListTile(
+            title: const Text('Network Image Sample'),
+            subtitle: const Text('Photo viewer with network images'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => const NetworkImageSamplePage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
             title: const Text('Overlay Sample'),
             subtitle: const Text('Photo viewer with comment input overlay'),
             trailing: const Icon(Icons.chevron_right),
@@ -179,6 +191,21 @@ class PostListPage extends StatelessWidget {
       retweetCount: 56,
       likeCount: 280,
       viewCount: 2000,
+    ),
+    Post(
+      username: 'User5',
+      screenName: 'user5',
+      userIconPath: 'assets/profile.jpg',
+      content: 'Here are some network images!',
+      imagePaths: [
+        'http://placehold.jp/24/cc9999/993333/1024x768.png',
+        'http://placehold.jp/24/99cc99/333333/1024x768.png',
+      ],
+      postedAt: DateTime.now().subtract(const Duration(hours: 1)),
+      commentCount: 25,
+      retweetCount: 65,
+      likeCount: 320,
+      viewCount: 2500,
     ),
   ];
 
@@ -1163,6 +1190,44 @@ class _MangaPageControl extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NetworkImageSamplePage extends StatelessWidget {
+  const NetworkImageSamplePage({super.key});
+
+  static const List<String> networkImages = [
+    'http://placehold.jp/24/cc9999/993333/1024x768.png',
+    'http://placehold.jp/24/99cc99/333333/1024x768.png',
+    'http://placehold.jp/24/9999cc/993333/1024x768.png',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Network Image Sample'),
+      ),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(8),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+        ),
+        itemCount: networkImages.length,
+        itemBuilder: (context, index) {
+          return Card(
+            clipBehavior: Clip.antiAlias,
+            child: PhotoViewerMultipleImage(
+              imageUrls: networkImages,
+              index: index,
+              id: 'network_images',
+            ),
+          );
+        },
       ),
     );
   }

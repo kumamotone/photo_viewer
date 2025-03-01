@@ -29,8 +29,14 @@ dependencies:
 The simplest way to use PhotoViewer is to display a single image:
 
 ```dart
+// ローカルアセット画像
 PhotoViewerImage(
   imageUrl: 'assets/your_image.jpg',
+)
+
+// ネットワーク画像
+PhotoViewerImage(
+  imageUrl: 'https://example.com/your_image.jpg',
 )
 ```
 
@@ -41,8 +47,13 @@ This creates a tappable image that opens a full-screen viewer when tapped.
 To display multiple images with swipe navigation:
 
 ```dart
+// ローカルアセットとネットワーク画像を混在させることも可能
 PhotoViewerMultipleImage(
-  imageUrls: ['assets/image1.jpg', 'assets/image2.jpg', 'assets/image3.jpg'],
+  imageUrls: [
+    'assets/image1.jpg', 
+    'https://example.com/image2.jpg',
+    'assets/image3.jpg'
+  ],
   index: 0, // Initial image index
   id: 'unique_id', // Unique identifier for Hero animation
 )
