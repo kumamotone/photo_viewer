@@ -1,6 +1,6 @@
 # photo_viewer
 
-<img src="./sample.gif" width=300>
+<img src="./example.gif" width=300>
 
 A versatile Flutter library for displaying and interacting with images in your app.
 
