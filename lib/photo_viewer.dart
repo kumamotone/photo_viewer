@@ -116,6 +116,8 @@ class VerticalSwipeDismissibleState extends State<VerticalSwipeDismissible>
   double dragAmount = 0;
   bool isDragging = false;
   int pointersCount = 0;
+  PointerDownEvent? initialPointerEvent;
+  bool isHorizontalSwipeDetected = false;
 
   @override
   void initState() {
@@ -135,7 +137,9 @@ class VerticalSwipeDismissibleState extends State<VerticalSwipeDismissible>
     ).animate(animateController);
   }
 
-  void handleDragStart() {
+  void handleDragStart(PointerDownEvent event) {
+    initialPointerEvent = event;
+    isHorizontalSwipeDetected = false;
     isDragging = true;
     if (animateController.isAnimating) {
       dragAmount =
@@ -152,6 +156,11 @@ class VerticalSwipeDismissibleState extends State<VerticalSwipeDismissible>
     if (!isActive || animateController.isAnimating) {
       return;
     }
+
+    if (event.delta.dx.abs() > event.delta.dy.abs()) {
+      return;
+    }
+
     final delta = event.delta.dy * 0.6;
     final oldDragExtent = dragAmount;
     setState(() {
@@ -171,6 +180,8 @@ class VerticalSwipeDismissibleState extends State<VerticalSwipeDismissible>
       return;
     }
     isDragging = false;
+    isHorizontalSwipeDetected = false;
+    initialPointerEvent = null;
     if (animateController.isCompleted) {
       return;
     }
@@ -189,7 +200,7 @@ class VerticalSwipeDismissibleState extends State<VerticalSwipeDismissible>
       onPointerDown: (event) {
         pointersCount++;
         if (pointersCount == 1) {
-          handleDragStart();
+          handleDragStart(event);
         }
       },
       onPointerUp: (event) {
@@ -206,7 +217,24 @@ class VerticalSwipeDismissibleState extends State<VerticalSwipeDismissible>
       onPointerMove: widget.enabled
           ? (event) {
               if (pointersCount < 2) {
-                handleDragUpdate(event);
+                if (!isHorizontalSwipeDetected && initialPointerEvent != null) {
+                  final dx =
+                      event.position.dx - initialPointerEvent!.position.dx;
+                  final dy =
+                      event.position.dy - initialPointerEvent!.position.dy;
+
+                  if (dx.abs() > dy.abs() && dx.abs() > 10) {
+                    isHorizontalSwipeDetected = true;
+                    isDragging = false;
+                    dragAmount = 0;
+                    animateController.value = 0.0;
+                    return;
+                  }
+                }
+
+                if (!isHorizontalSwipeDetected) {
+                  handleDragUpdate(event);
+                }
               } else {
                 handleDragEnd();
                 dragAmount = 0;
