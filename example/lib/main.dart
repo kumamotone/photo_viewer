@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_viewer/photo_viewer.dart';
 
@@ -95,6 +96,18 @@ class HomePage extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (context) => const MangaSamplePage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('カスタムフォトビューワーサンプル'),
+            subtitle: const Text('ダブルタップアクション付きフォトビューワー'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => const CustomPhotoViewerSamplePage(),
                 ),
               );
             },
@@ -1228,6 +1241,116 @@ class NetworkImageSamplePage extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class CustomPhotoViewerImage extends StatelessWidget {
+  const CustomPhotoViewerImage({
+    required this.imageUrl,
+    required this.onDoubleTap,
+    super.key,
+  });
+
+  final String imageUrl;
+  final VoidCallback onDoubleTap;
+
+  bool _isNetworkUrl(String url) {
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  Widget _buildImage(String url) {
+    if (_isNetworkUrl(url)) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        fit: BoxFit.cover,
+        placeholder: (context, url) =>
+            const Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      );
+    } else {
+      return Image.asset(
+        url,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final heroTag = 'custom_photo_viewer_$imageUrl';
+
+    return GestureDetector(
+      onTap: () {
+        showPhotoViewer(
+          context: context,
+          heroTagBuilder: (context) => heroTag,
+          builder: (context) => _buildImage(imageUrl),
+        );
+      },
+      onDoubleTap: onDoubleTap,
+      child: Hero(
+        tag: heroTag,
+        child: _buildImage(imageUrl),
+      ),
+    );
+  }
+}
+
+class CustomPhotoViewerSamplePage extends StatelessWidget {
+  const CustomPhotoViewerSamplePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('カスタムフォトビューワーサンプル'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'ダブルタップでカスタムアクション',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: SizedBox(
+                width: 250,
+                height: 250,
+                child: CustomPhotoViewerImage(
+                  imageUrl: 'assets/feed_image.jpg',
+                  onDoubleTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('画像がダブルタップされました！'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              '通常タップ: フォトビューワーを開く\nダブルタップ: カスタムアクション実行',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
