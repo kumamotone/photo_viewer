@@ -1,6 +1,6 @@
 name: photo_viewer
 description: 'Flutter image viewer library with multiple display modes. Features include: pinch-zoom, double-tap zoom, vertical dismiss, page navigation, custom overlays, and hero animations.'
-version: 0.0.2
+version: 0.0.3
 repository: https://github.com/kumamotone/photo_viewer
 homepage: https://pub.dev/packages/photo_viewer
 

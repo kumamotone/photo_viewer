@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.3 - 2025-03-10
+
+### Features
+- allow customization of the fit, placeholder, and errorWidget
+
+### Bug Fixes
+- adjust scroll sensitivity during image zoom
+- disable vertical swipe handling while horizontal swiping
+
 ## 0.0.2 - 2025-03-02
 
 - tweak README
