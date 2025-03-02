@@ -725,6 +725,7 @@ class _InteractivePhotoPageState extends State<InteractivePhotoPage> {
           transformationController: widget.transformationController,
           minScale: widget.minScale,
           maxScale: widget.maxScale,
+          scaleFactor: 100,
           child: Center(
             child: widget.useHero
                 ? Hero(
