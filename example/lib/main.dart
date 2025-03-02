@@ -1200,7 +1200,7 @@ class NetworkImageSamplePage extends StatelessWidget {
 
   static const List<String> networkImages = [
     'http://placehold.jp/24/cc9999/993333/1024x768.png',
-    'http://placehold.jp/24/99cc99/333333/1024x768.png',
+    'https://wrongpath',
     'http://placehold.jp/24/9999cc/993333/1024x768.png',
   ];
 

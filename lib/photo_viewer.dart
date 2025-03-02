@@ -12,6 +12,8 @@ Widget _buildImageFromUrl(
   BoxFit fit = BoxFit.cover,
   double? width,
   double? height,
+  Widget Function(BuildContext, String)? placeholder,
+  Widget Function(BuildContext, String, dynamic)? errorWidget,
 }) {
   if (_isNetworkUrl(url)) {
     return CachedNetworkImage(
@@ -19,9 +21,10 @@ Widget _buildImageFromUrl(
       fit: fit,
       width: width,
       height: height,
-      placeholder: (context, url) =>
-          const Center(child: CircularProgressIndicator()),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
+      placeholder: placeholder ??
+          (context, url) => const Center(child: CircularProgressIndicator()),
+      errorWidget: errorWidget ??
+          (context, url, error) => const Icon(Icons.error, color: Colors.grey),
     );
   } else {
     return Image.asset(
@@ -302,6 +305,9 @@ class PhotoViewerImage extends StatelessWidget {
     this.maxScale,
     this.borderRadius = 16,
     this.showDefaultCloseButton = true,
+    this.fit = BoxFit.cover,
+    this.placeholder,
+    this.errorWidget,
     super.key,
   });
 
@@ -311,6 +317,9 @@ class PhotoViewerImage extends StatelessWidget {
   final double? maxScale;
   final double borderRadius;
   final bool showDefaultCloseButton;
+  final BoxFit fit;
+  final Widget Function(BuildContext, String)? placeholder;
+  final Widget Function(BuildContext, String, dynamic)? errorWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -323,6 +332,9 @@ class PhotoViewerImage extends StatelessWidget {
       maxScale: maxScale,
       borderRadius: borderRadius,
       showDefaultCloseButton: showDefaultCloseButton,
+      fit: fit,
+      placeholder: placeholder,
+      errorWidget: errorWidget,
     );
   }
 }
@@ -340,6 +352,9 @@ class PhotoViewerMultipleImage extends StatelessWidget {
     this.showDefaultCloseButton = true,
     this.onPageChanged,
     this.onJumpToPage,
+    this.fit = BoxFit.cover,
+    this.placeholder,
+    this.errorWidget,
     super.key,
   });
 
@@ -353,6 +368,9 @@ class PhotoViewerMultipleImage extends StatelessWidget {
   final bool showDefaultCloseButton;
   final ValueChanged<int>? onPageChanged;
   final void Function(void Function(int page) jump)? onJumpToPage;
+  final BoxFit fit;
+  final Widget Function(BuildContext, String)? placeholder;
+  final Widget Function(BuildContext, String, dynamic)? errorWidget;
 
   String _heroTag(int index) =>
       'photo_viewer_${id}_${index}_${imageUrls[index]}';
@@ -364,7 +382,12 @@ class PhotoViewerMultipleImage extends StatelessWidget {
         showPhotoViewer(
           context: context,
           builders: imageUrls.map<WidgetBuilder>((url) {
-            return (BuildContext context) => _buildImageFromUrl(url);
+            return (BuildContext context) => _buildImageFromUrl(
+                  url,
+                  fit: fit,
+                  placeholder: placeholder,
+                  errorWidget: errorWidget,
+                );
           }).toList(),
           heroTagBuilder: _heroTag,
           initialPage: index,
@@ -378,7 +401,12 @@ class PhotoViewerMultipleImage extends StatelessWidget {
       },
       child: Hero(
         tag: _heroTag(index),
-        child: _buildImageFromUrl(imageUrls[index]),
+        child: _buildImageFromUrl(
+          imageUrls[index],
+          fit: fit,
+          placeholder: placeholder,
+          errorWidget: errorWidget,
+        ),
       ),
     );
   }
@@ -399,6 +427,9 @@ class PhotoViewerScreen extends StatefulWidget {
     this.onPageChanged,
     this.onJumpToPage,
     this.enableVerticalDismiss = true,
+    this.fit = BoxFit.cover,
+    this.placeholder,
+    this.errorWidget,
     super.key,
   });
 
@@ -417,6 +448,9 @@ class PhotoViewerScreen extends StatefulWidget {
   final ValueChanged<int>? onPageChanged;
   final void Function(void Function(int page) jump)? onJumpToPage;
   final bool enableVerticalDismiss;
+  final BoxFit fit;
+  final Widget Function(BuildContext, String)? placeholder;
+  final Widget Function(BuildContext, String, dynamic)? errorWidget;
 
   @override
   PhotoViewerScreenState createState() => PhotoViewerScreenState();
@@ -586,6 +620,9 @@ class PhotoViewerScreenState extends State<PhotoViewerScreen>
           isZoomed.value = zoomed;
         }
       },
+      fit: widget.fit,
+      placeholder: widget.placeholder,
+      errorWidget: widget.errorWidget,
     );
 
     return child;
@@ -606,6 +643,9 @@ class InteractivePhotoPage extends StatefulWidget {
     required this.isScrolling,
     required this.heroTag,
     required this.useHero,
+    this.fit = BoxFit.cover,
+    this.placeholder,
+    this.errorWidget,
     this.onScaleChanged,
     super.key,
   });
@@ -621,6 +661,9 @@ class InteractivePhotoPage extends StatefulWidget {
   final void Function(double scale)? onScaleChanged;
   final String heroTag;
   final bool useHero;
+  final BoxFit fit;
+  final Widget Function(BuildContext, String)? placeholder;
+  final Widget Function(BuildContext, String, dynamic)? errorWidget;
 
   @override
   State<InteractivePhotoPage> createState() => _InteractivePhotoPageState();
@@ -760,6 +803,9 @@ Future<void> showPhotoViewer({
   bool enableVerticalDismiss = true,
   ValueChanged<int>? onPageChanged,
   void Function(void Function(int page) jump)? onJumpToPage,
+  BoxFit fit = BoxFit.cover,
+  Widget Function(BuildContext, String)? placeholder,
+  Widget Function(BuildContext, String, dynamic)? errorWidget,
 }) {
   return Navigator.of(context, rootNavigator: true).push(
     TransparentPageRoute<dynamic>(
@@ -776,6 +822,9 @@ Future<void> showPhotoViewer({
           enableVerticalDismiss: enableVerticalDismiss,
           onPageChanged: onPageChanged,
           onJumpToPage: onJumpToPage,
+          fit: fit,
+          placeholder: placeholder,
+          errorWidget: errorWidget,
         );
       },
     ),
