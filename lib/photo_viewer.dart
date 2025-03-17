@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 bool _isNetworkUrl(String url) {
   return url.startsWith('http://') || url.startsWith('https://');
+}
+
+bool _isPathUrl(String url) {
+  return url.startsWith('/data');
 }
 
 Widget _buildImageFromUrl(
@@ -25,6 +30,13 @@ Widget _buildImageFromUrl(
           (context, url) => const Center(child: CircularProgressIndicator()),
       errorWidget: errorWidget ??
           (context, url, error) => const Icon(Icons.error, color: Colors.grey),
+    );
+  } else if (_isPathUrl(url)) {
+    return Image.file(
+      File(url),
+      fit: fit,
+      width: width,
+      height: height,
     );
   } else {
     return Image.asset(
