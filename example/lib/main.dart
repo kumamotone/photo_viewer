@@ -1165,7 +1165,7 @@ class _MangaPageControl extends StatelessWidget {
                     overlayColor: Colors.white.withAlpha(32),
                   ),
                   child: Transform(
-                    transform: Matrix4.identity()..scale(-1.0, 1, 1),
+                    transform: Matrix4.identity()..scaleByDouble(-1, 1, 1, 1),
                     alignment: Alignment.center,
                     child: Slider(
                       value: currentPage.toDouble(),
