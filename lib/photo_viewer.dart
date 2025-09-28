@@ -706,6 +706,7 @@ class _InteractivePhotoPageState extends State<InteractivePhotoPage> {
   bool isDismissEnabled = true;
   bool isDismissed = false;
   bool isZoomed = false;
+  int _pointerCount = 0;
 
   @override
   void initState() {
@@ -786,15 +787,31 @@ class _InteractivePhotoPageState extends State<InteractivePhotoPage> {
   @override
   Widget build(BuildContext context) {
     return Listener(
-      onPointerUp: (_) => changeVisibility(),
+      onPointerUp: (_) {
+        changeVisibility();
+        _pointerCount--;
+      },
+      onPointerDown: (_) {
+        _pointerCount++;
+        if (_pointerCount >= 2) {
+          widget.onScaleChanged?.call(widget.maxScale);
+        }
+      },
+      onPointerCancel: (_) {
+        _pointerCount--;
+      },
       child: GestureDetector(
         onDoubleTap: doubleTap,
         onDoubleTapDown: (details) {
           doubleTapPosition = details.localPosition;
         },
         child: InteractiveViewer(
-          onInteractionStart: (_) =>
-              widget.controlsVisibilityController.reverse(),
+          onInteractionStart: (details) {
+            widget.controlsVisibilityController.reverse();
+            if (details.pointerCount >= 2) {
+              widget.onScaleChanged?.call(widget.maxScale);
+            }
+          },
           onInteractionEnd: (_) {
             onScaleChanged(widget.transformationController.value.row0.x);
           },
