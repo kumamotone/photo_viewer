@@ -737,11 +737,13 @@ class _InteractivePhotoPageState extends State<InteractivePhotoPage> {
       widget.onScaleChanged?.call(widget.minScale);
     } else {
       end = Matrix4.identity()
-        ..translate(
+        ..translateByDouble(
           -doubleTapPosition.dx * (widget.maxScale / 2),
           -doubleTapPosition.dy * (widget.maxScale / 2),
+          0,
+          1,
         )
-        ..scale(widget.maxScale);
+        ..scaleByDouble(widget.maxScale, widget.maxScale, 1, 1);
       widget.onScaleChanged?.call(widget.maxScale);
     }
     animation = Matrix4Tween(
