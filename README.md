@@ -20,7 +20,7 @@ To use this plugin, add install_plugin as a dependency in your pubspec.yaml file
 
 ```
 dependencies:
-  photo_viewer: '^0.0.2'
+  photo_viewer: '^0.1.0'
 ```
 
 ## Basic Usage
