@@ -12,6 +12,7 @@ A versatile Flutter library for displaying and interacting with images in your a
 - Multiple image viewing with pagination
 - Custom overlay support
 - Hero animation support
+- Support for asset, network, and file images
 
 ## Installation
 
@@ -58,7 +59,20 @@ PhotoViewerMultipleImage(
 
 ### Direct Display Function
 
-For more control, use the `showPhotoViewer` function:
+
+`PhotoViewerImage` also supports the same gesture callbacks as PhotoViewerImage:
+
+```dart
+PhotoViewerImage(
+  imageUrls: imageList,
+  index: 0,
+  id: 'gallery',
+  onLongPress: () => print('Long pressed!'),
+  onDoubleTap: () => print('Double tapped!'),
+)
+```
+
+The `PhotoViewerImage` widget handles file images, network images, and asset images, and also exposes properties such as long press and double tap. However, if you want more detailed customization, please refer to the `PhotoViewerImage` implementation and call the `showPhotoViewer` function directly.
 
 ```dart
 showPhotoViewer(
@@ -178,6 +192,7 @@ Check out the example project in the `example` folder for complete implementatio
 - Gallery with thumbnails
 - Comment overlay
 - Manga/book reader
+- Custom gesture handling examples
 
 ## License
 
