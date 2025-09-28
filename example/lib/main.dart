@@ -99,6 +99,19 @@ class HomePage extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            title: const Text('PhotoViewerImage properties Sample'),
+            subtitle:
+                const Text('PhotoViewerImage with custom gesture handling'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => const CustomGestureSamplePage(),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -1228,6 +1241,113 @@ class NetworkImageSamplePage extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class CustomGestureSamplePage extends StatelessWidget {
+  const CustomGestureSamplePage({super.key});
+
+  static const List<String> images = [
+    'assets/feed_image.jpg',
+    'assets/feed_image2.jpg',
+    'assets/feed_image3.jpg',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Custom Gesture Sample'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Custom Gesture Examples:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+
+            // Example 1: Long press to show snackbar
+            const Text('1. Long press to show message:'),
+            const SizedBox(height: 8),
+            Card(
+              clipBehavior: Clip.antiAlias,
+              child: PhotoViewerImage(
+                imageUrl: images[0],
+                onLongPress: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Long pressed on image!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Example 2: Double tap custom behavior
+            const Text('2. Double tap to show dialog:'),
+            const SizedBox(height: 8),
+            Card(
+              clipBehavior: Clip.antiAlias,
+              child: PhotoViewerImage(
+                imageUrl: images[1],
+                onDoubleTap: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Double Tap Detected'),
+                        content: const Text('You double tapped on the image!'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Example 3: Both long press and double tap
+            const Text('3. Both long press and double tap:'),
+            const SizedBox(height: 8),
+            Card(
+              clipBehavior: Clip.antiAlias,
+              child: PhotoViewerImage(
+                imageUrl: images[2],
+                onLongPress: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Long press detected!'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+                onDoubleTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Double tap detected!'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

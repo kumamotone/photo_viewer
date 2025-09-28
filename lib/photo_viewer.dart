@@ -320,6 +320,8 @@ class PhotoViewerImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.placeholder,
     this.errorWidget,
+    this.onLongPress,
+    this.onDoubleTap,
     super.key,
   });
 
@@ -332,6 +334,9 @@ class PhotoViewerImage extends StatelessWidget {
   final BoxFit fit;
   final Widget Function(BuildContext, String)? placeholder;
   final Widget Function(BuildContext, String, dynamic)? errorWidget;
+
+  final VoidCallback? onLongPress;
+  final VoidCallback? onDoubleTap;
 
   @override
   Widget build(BuildContext context) {
@@ -347,6 +352,8 @@ class PhotoViewerImage extends StatelessWidget {
       fit: fit,
       placeholder: placeholder,
       errorWidget: errorWidget,
+      onLongPress: onLongPress,
+      onDoubleTap: onDoubleTap,
     );
   }
 }
@@ -367,6 +374,8 @@ class PhotoViewerMultipleImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.placeholder,
     this.errorWidget,
+    this.onLongPress,
+    this.onDoubleTap,
     super.key,
   });
 
@@ -384,42 +393,52 @@ class PhotoViewerMultipleImage extends StatelessWidget {
   final Widget Function(BuildContext, String)? placeholder;
   final Widget Function(BuildContext, String, dynamic)? errorWidget;
 
+  final VoidCallback? onLongPress;
+
+  final VoidCallback? onDoubleTap;
+
   String _heroTag(int index) =>
       'photo_viewer_${id}_${index}_${imageUrls[index]}';
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showPhotoViewer(
-          context: context,
-          builders: imageUrls.map<WidgetBuilder>((url) {
-            return (BuildContext context) => _buildImageFromUrl(
-                  url,
-                  fit: fit,
-                  placeholder: placeholder,
-                  errorWidget: errorWidget,
-                );
-          }).toList(),
-          heroTagBuilder: _heroTag,
-          initialPage: index,
-          overlayBuilder: overlayBuilder,
-          minScale: minScale,
-          maxScale: maxScale,
-          showDefaultCloseButton: showDefaultCloseButton,
-          onPageChanged: onPageChanged,
-          onJumpToPage: onJumpToPage,
-        );
-      },
-      child: Hero(
-        tag: _heroTag(index),
-        child: _buildImageFromUrl(
-          imageUrls[index],
-          fit: fit,
-          placeholder: placeholder,
-          errorWidget: errorWidget,
-        ),
+    void defaultOnTap() {
+      showPhotoViewer(
+        context: context,
+        builders: imageUrls.map<WidgetBuilder>((url) {
+          return (BuildContext context) => _buildImageFromUrl(
+                url,
+                fit: fit,
+                placeholder: placeholder,
+                errorWidget: errorWidget,
+              );
+        }).toList(),
+        heroTagBuilder: _heroTag,
+        initialPage: index,
+        overlayBuilder: overlayBuilder,
+        minScale: minScale,
+        maxScale: maxScale,
+        showDefaultCloseButton: showDefaultCloseButton,
+        onPageChanged: onPageChanged,
+        onJumpToPage: onJumpToPage,
+      );
+    }
+
+    final child = Hero(
+      tag: _heroTag(index),
+      child: _buildImageFromUrl(
+        imageUrls[index],
+        fit: fit,
+        placeholder: placeholder,
+        errorWidget: errorWidget,
       ),
+    );
+
+    return GestureDetector(
+      onTap: defaultOnTap,
+      onLongPress: onLongPress,
+      onDoubleTap: onDoubleTap,
+      child: child,
     );
   }
 }
