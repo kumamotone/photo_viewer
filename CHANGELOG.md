@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0 - 2025-09-28
+### Improvements
+- Check whether the url is local image path
+- Expose some GestureDetector properties in PhotoViewerImage
+- Resolve conflict between viewer zoom and horizontal swipes
+- Fix the warnings in Flutter 3.35.4 (Replaced Matrix4.translate and scale with translateByDouble and scaleByDouble)
+
 ## 0.0.3 - 2025-03-10
 
 ### Features
