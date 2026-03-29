@@ -1,78 +1,122 @@
 # photo_viewer
 
-![](https://github.com/kumamotone/photo_viewer/raw/main/example.gif)
+[![pub package](https://img.shields.io/pub/v/photo_viewer.svg)](https://pub.dev/packages/photo_viewer)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/kumamotone/photo_viewer/blob/main/LICENSE)
+[![Flutter](https://img.shields.io/badge/Flutter-%E2%89%A51.17.0-02569B?logo=flutter)](https://flutter.dev)
 
-A versatile Flutter library for displaying and interacting with images in your app.
+A lightweight Flutter library for displaying and interacting with images. Supports pinch-to-zoom, double-tap zoom, swipe-to-dismiss, multi-image pagination, and custom overlays — with minimal setup.
+
+<p align="center">
+  <img src="https://github.com/kumamotone/photo_viewer/raw/main/example.gif" alt="photo_viewer demo" width="300" />
+</p>
 
 ## Features
 
-- Image zoom with pinch gestures
-- Double-tap zoom functionality
-- Vertical swipe to dismiss
-- Multiple image viewing with pagination
-- Custom overlay support
-- Hero animation support
-- Support for asset, network, and file images
+| Feature | Description |
+|---|---|
+| Pinch-to-zoom | Smooth zoom with configurable min/max scale |
+| Double-tap zoom | Tap to zoom in/out at the tapped position |
+| Swipe to dismiss | Vertical swipe to close the viewer |
+| Multi-image pagination | Swipe between multiple images with `PageView` |
+| Custom overlays | Add any widget on top of the viewer |
+| Hero animations | Seamless open/close transitions |
+| Multiple sources | Asset, network, and file images |
 
-## Installation
+### Platform Support
 
-To use this plugin, add install_plugin as a dependency in your pubspec.yaml file. For example:
+| Android | iOS | macOS | Windows | Linux |
+|:---:|:---:|:---:|:---:|:---:|
+| ✅ | ✅ | ✅ | ✅ | ✅ |
 
-```
+## Getting Started
+
+Add `photo_viewer` to your `pubspec.yaml`:
+
+```yaml
 dependencies:
-  photo_viewer: '^0.1.0'
+  photo_viewer: ^0.1.0
 ```
 
-## Basic Usage
+Then run:
 
-### Single Image Display
+```sh
+flutter pub get
+```
 
-The simplest way to use PhotoViewer is to display a single image:
+## Usage
+
+### Single Image
 
 ```dart
 PhotoViewerImage(
   imageUrl: 'assets/your_image.jpg',
 )
+```
 
+Tap the image to open a full-screen viewer. Works with asset, network, and file paths.
+
+```dart
+// Network image
 PhotoViewerImage(
-  imageUrl: 'https://example.com/your_image.jpg',
+  imageUrl: 'https://example.com/photo.jpg',
 )
 ```
 
-This creates a tappable image that opens a full-screen viewer when tapped.
-
-### Multiple Images Display
-
-To display multiple images with swipe navigation:
+### Multiple Images
 
 ```dart
 PhotoViewerMultipleImage(
   imageUrls: [
-    'assets/image1.jpg', 
+    'assets/image1.jpg',
     'https://example.com/image2.jpg',
-    'assets/image3.jpg'
+    'assets/image3.jpg',
   ],
-  index: 0, // Initial image index
-  id: 'unique_id', // Unique identifier for Hero animation
+  index: 0,
+  id: 'gallery',
 )
 ```
 
-### Direct Display Function
+### Custom Overlays
 
-
-`PhotoViewerImage` also supports the same gesture callbacks as PhotoViewerImage:
+Add your own UI on top of the viewer:
 
 ```dart
 PhotoViewerImage(
-  imageUrls: imageList,
-  index: 0,
-  id: 'gallery',
-  onLongPress: () => print('Long pressed!'),
-  onDoubleTap: () => print('Double tapped!'),
+  imageUrl: 'assets/photo.jpg',
+  overlayBuilder: (context) => Stack(
+    children: [
+      YourCustomCommentInput(),
+      YourCustomCloseButton(),
+    ],
+  ),
+  showDefaultCloseButton: false,
 )
 ```
 
-The `PhotoViewerImage` widget handles file images, network images, and asset images, and also exposes properties such as long press and double tap. However, if you want more detailed customization, please refer to the `PhotoViewerImage` implementation and call the `showPhotoViewer` function directly.
+### Gallery with Thumbnails
+
+```dart
+PhotoViewerMultipleImage(
+  imageUrls: imagePaths,
+  index: currentIndex,
+  id: 'gallery',
+  onPageChanged: (index) {
+    setState(() => currentIndex = index);
+  },
+  onJumpToPage: (jump) {
+    jumpToPage = jump;
+  },
+  overlayBuilder: (context) => YourCustomThumbnails(
+    imagePaths: imagePaths,
+    selectedIndex: currentIndex,
+    onTap: (index) => jumpToPage(index),
+  ),
+)
+```
+
+### Advanced: Direct `showPhotoViewer`
+
+For full control, call `showPhotoViewer` directly:
 
 ```dart
 showPhotoViewer(
@@ -88,112 +132,32 @@ showPhotoViewer(
 );
 ```
 
-## Advanced Usage
+This is useful for cases like a manga/book reader where you need fine-grained control over page building, dismiss behavior, and overlays.
 
-### Custom Overlays
+## Customization
 
-Add custom UI elements on top of the image viewer:
-
-```dart
-PhotoViewerImage(
-  imageUrl: 'assets/your_image.jpg',
-  overlayBuilder: (context) => Stack(
-    children: [
-      YourCustomCommentInput(),
-      YourCustomCloseButton(),
-    ],
-  ),
-  showDefaultCloseButton: false, // Hide the default close button
-)
-```
-
-### Gallery with Thumbnails
-
-Create a gallery-style image viewer with thumbnails:
-
-```dart
-PhotoViewerMultipleImage(
-  imageUrls: imagePaths,
-  index: currentIndex,
-  id: 'gallery',
-  onPageChanged: (index) {
-    // Update your state with the current index
-    setState(() {
-      currentIndex = index;
-    });
-  },
-  onJumpToPage: (jump) {
-    // Store the jump function to programmatically change pages
-    jumpToPage = jump;
-  },
-  overlayBuilder: (context) => YourCustomThumbnails(
-    imagePaths: imagePaths,
-    selectedIndex: currentIndex,
-    onTap: (index) {
-      // Use the stored jump function to navigate to the selected thumbnail
-      jumpToPage(index);
-    },
-  ),
-)
-```
-
-### Manga/Book Reader Implementation
-
-Create a comic book or manga reader with custom page controls:
-
-```dart
-showPhotoViewer(
-  context: context,
-  builders: pages.map<WidgetBuilder>((page) {
-    return (BuildContext context) => Image.asset(
-          page,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.contain,
-        );
-  }).toList(),
-  showDefaultCloseButton: false,
-  enableVerticalDismiss: false, // Disable vertical swipe to dismiss
-  initialPage: currentPage,
-  onPageChanged: (index) {
-    // Update your state with the current page
-  },
-  onJumpToPage: (jump) {
-    // Store the jump function for page navigation
-  },
-  overlayBuilder: (context) => Stack(
-    children: [
-      YourCustomCloseButton(),
-      YourCustomPageControls(
-        currentPage: currentPage,
-        totalPages: totalPages,
-        onPageChanged: (index) {
-          // Use the stored jump function to navigate to the selected page
-        },
-      ),
-    ],
-  ),
-)
-```
-
-## Customization Options
-
-PhotoViewer provides various customization options:
-
-- `minScale`/`maxScale`: Set the minimum and maximum zoom scale
-- `showDefaultCloseButton`: Toggle the default close button visibility
-- `enableVerticalDismiss`: Enable or disable vertical swipe to dismiss
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `minScale` | `double` | `1.0` | Minimum zoom scale |
+| `maxScale` | `double` | `3.0` | Maximum zoom scale |
+| `showDefaultCloseButton` | `bool` | `true` | Show/hide the default close button |
+| `enableVerticalDismiss` | `bool` | `true` | Enable/disable swipe to dismiss |
+| `fit` | `BoxFit` | `BoxFit.cover` | Image fit mode |
+| `overlayBuilder` | `WidgetBuilder?` | `null` | Custom overlay widget |
+| `onPageChanged` | `ValueChanged<int>?` | `null` | Page change callback |
+| `onJumpToPage` | `Function?` | `null` | Provides a function to jump to a specific page |
 
 ## Example
 
-Check out the example project in the `example` folder for complete implementation samples including:
+Check out the [example](https://github.com/kumamotone/photo_viewer/tree/main/example) project for complete samples:
 
 - Basic image viewer
 - Social media feed with image grids
 - Gallery with thumbnails
 - Comment overlay
 - Manga/book reader
-- Custom gesture handling examples
+- Custom gesture handling
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/kumamotone/photo_viewer/blob/main/LICENSE) file for details.
+MIT License — see [LICENSE](https://github.com/kumamotone/photo_viewer/blob/main/LICENSE) for details.
