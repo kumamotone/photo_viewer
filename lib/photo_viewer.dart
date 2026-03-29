@@ -9,7 +9,26 @@ bool _isNetworkUrl(String url) {
 }
 
 bool _isPathUrl(String url) {
-  return url.startsWith('/data');
+  // Check for POSIX paths (macOS, iOS, Android, Linux)
+  // They all start with "/"
+  if (!Platform.isWindows && url.startsWith('/')) {
+    return true;
+  }
+
+  // Check for Windows path (C:\, D:\, E:\, etc.)
+  // Pattern: [A-Z]:[/\\]
+  if (Platform.isWindows && url.length >= 3) {
+    final firstChar = url[0].toUpperCase();
+    final firstCharIsInRange =
+        firstChar.compareTo('A') >= 0 && firstChar.compareTo('Z') <= 0;
+    final secondCharIsColon = url[1] == ':';
+    final thirdCharIsSlash = url[2] == '/' || url[2] == r'\';
+    if (firstCharIsInRange && secondCharIsColon && thirdCharIsSlash) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 Widget _buildImageFromUrl(
