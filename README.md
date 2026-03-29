@@ -34,7 +34,7 @@ Add `photo_viewer` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  photo_viewer: ^0.1.0
+  photo_viewer: ^1.0.0
 ```
 
 Then run:

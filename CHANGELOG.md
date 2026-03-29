@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0 - 2026-03-29
+
+### Bug Fixes
+- Fix Windows local image path support (#14)
+
+### Improvements
+- Improve README with badges, platform support table, and cleaner structure
+
 ## 0.1.0 - 2025-09-28
 ### Improvements
 - Check whether the url is local image path
