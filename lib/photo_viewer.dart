@@ -45,6 +45,8 @@ Widget _buildImageFromUrl(
       fit: fit,
       width: width,
       height: height,
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       placeholder: placeholder ??
           (context, url) => const Center(child: CircularProgressIndicator()),
       errorWidget: errorWidget ??
@@ -56,6 +58,7 @@ Widget _buildImageFromUrl(
       fit: fit,
       width: width,
       height: height,
+      gaplessPlayback: true,
     );
   } else {
     return Image.asset(
@@ -63,6 +66,7 @@ Widget _buildImageFromUrl(
       fit: fit,
       width: width,
       height: height,
+      gaplessPlayback: true,
     );
   }
 }
